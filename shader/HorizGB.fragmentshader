@@ -1,0 +1,45 @@
+#version 330 core
+
+// Ouput data
+out vec4 color;
+
+uniform sampler2D srcGBtexture;
+uniform float horizBias;
+uniform bool blurDire;
+in vec2 UV;
+float Gaussian1D[23] = float[](
+0.010186073152280718,
+0.014412975079967333,
+0.01973075202022101,
+0.026132249651636748,
+0.03348521689483764,
+0.04151189811749449,
+0.049789208790212966,
+0.05777514120274734,
+0.06486194444297944,
+0.07045017395972196,
+0.0740316337128937,
+0.07526546595001357,
+0.0740316337128937,
+0.07045017395972196,
+0.06486194444297944,
+0.057775141202747335,
+0.049789208790212966,
+0.04151189811749449,
+0.033485216894837626,
+0.026132249651636748,
+0.019730752020220996,
+0.014412975079967328,
+0.010186073152280718
+);
+void main(){
+	vec4 result = vec4(0,0,0,0);
+	for(int i = -11;i < 12; i++)
+	{
+		if(blurDire)
+			result += texture(srcGBtexture,UV + vec2(horizBias * i,0)) * Gaussian1D[i + 11]; 
+		else
+			result += texture(srcGBtexture,UV + vec2(0,horizBias * i)) * Gaussian1D[i + 11]; 
+	}
+	color = result;
+}
